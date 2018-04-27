@@ -1,0 +1,20 @@
+package com.cgaxtr.hiroom.Exceptions;
+
+public class UserAlreadyExists extends Exception{
+
+    public UserAlreadyExists(){
+        super();
+    }
+
+    public UserAlreadyExists(String message){
+        super(message);
+    }
+
+    public UserAlreadyExists(String message, Throwable cause){
+        super(message,cause);
+    }
+
+    public UserAlreadyExists(Throwable cause) {
+        super(cause);
+    }
+}

@@ -1,0 +1,116 @@
+package com.cgaxtr.hiroom.Services;
+
+import com.cgaxtr.hiroom.Auth.JWTUtils;
+import com.cgaxtr.hiroom.DAO.DAOUser;
+import com.cgaxtr.hiroom.Exceptions.InternalServerError;
+import com.cgaxtr.hiroom.Exceptions.UserAlreadyExists;
+import com.cgaxtr.hiroom.POJO.Credential;
+import com.cgaxtr.hiroom.POJO.Token;
+import com.cgaxtr.hiroom.POJO.User;
+import com.cgaxtr.hiroom.Utils.File;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.InputStream;
+
+@Path("/user")
+public class UserService {
+
+    private DAOUser userDAO = new DAOUser();
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/register")
+    public Response registerUser(User user){
+
+        try {
+            userDAO.register(user);
+        } catch (UserAlreadyExists userAlreadyExists) {
+            return Response.status(Response.Status.CONFLICT).build();
+        } catch (InternalServerError internalServerError) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return Response.ok().build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/login")
+    public Response login(Credential credential){
+        Boolean login;
+
+        try{
+            login = userDAO.login(credential);
+        } catch (InternalServerError internalServerError) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+        if (login){
+            String token = JWTUtils.issueToken(credential.getEmail());
+            Token t = new Token(token);
+            return Response.status(Response.Status.OK).entity(t).build();
+        }else{
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+    }
+
+    @POST
+    @Path("/update_profile_image")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response uploadUserProfile(@FormDataParam("file") InputStream fileInputStream, @FormDataParam("file") FormDataContentDisposition fileMetaData){
+
+        try {
+            File.save(fileInputStream, File.USER_PROFILE_PATH + fileMetaData.getFileName());
+
+            //update database
+        } catch (Exception e){
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return Response.status(Response.Status.OK).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    //@JWTTokenNeeded
+    public User getProfile(@PathParam("id") int id) {
+        User u = null;
+        try{
+            u = userDAO.getUserById(12);
+        } catch (InternalServerError internalServerError) {
+            internalServerError.printStackTrace();
+        }
+        return u;
+    }
+
+    @POST
+    //@JWTTokenNeeded
+    @Path("/update/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateProfile(@PathParam("id") int id, User user){
+
+        try {
+            if (userDAO.updateUser(id, user)){
+                return Response.status(Response.Status.OK).build();
+            }else{
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+        } catch (InternalServerError internalServerError) {
+            internalServerError.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+}
