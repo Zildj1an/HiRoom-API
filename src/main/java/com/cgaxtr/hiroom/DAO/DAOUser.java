@@ -18,8 +18,8 @@ public class DAOUser {
         this.connect = DB.getInstance().getConnection();
     }
 
-    public void register(User user) throws UserAlreadyExists, InternalServerError {
-
+    public int register(User user) throws UserAlreadyExists, InternalServerError {
+        int id;
         String queryInsert = " INSERT INTO users (name, email, pass) VALUES (?, ?, ?)";
 
         try {
@@ -29,19 +29,24 @@ public class DAOUser {
             preparedStatement.setString(3, user.getPass());
 
             preparedStatement.execute();
+
+            User u = getUserByEmail(user.getEmail());
+            id = u.getId();
+
         }catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e){
             throw new UserAlreadyExists();
         }catch (SQLException e) {
             throw new InternalServerError();
         }
 
+        return id;
+
     }
 
-    public boolean login(Credential credential) throws InternalServerError {
+    public User login(Credential credential) throws InternalServerError {
+        User user = null;
 
         String querySelect = "SELECT * FROM users WHERE email=? and pass=?";
-
-        boolean login = false;
 
         try {
             PreparedStatement preparedStatement = connect.prepareStatement(querySelect);
@@ -51,20 +56,55 @@ public class DAOUser {
             ResultSet rs = preparedStatement.executeQuery();
 
             if(rs.next()){
-                login = true;
+                user = getUserByEmail(credential.getEmail());
             }
         } catch (SQLException e) {
             throw  new InternalServerError();
         }
 
-        return login;
+        return user;
+    }
+
+    public User getUserByEmail(String email) throws InternalServerError {
+
+        User user = null;
+
+        String querySelect = "SELECT  * FROM users WHERE email=?" ;
+
+        try{
+            PreparedStatement preparedStatement = connect.prepareStatement(querySelect);
+            preparedStatement.setString(1, email);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()){
+                user = new User();
+                user.setId(rs.getInt("id"));
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setPathImg(rs.getString("imgPath"));
+                user.setGender(rs.getString("gender"));
+                user.setSmoker(rs.getBoolean("smoker"));
+                user.setWorker(rs.getString("worker"));
+                user.setDescription(rs.getString("description"));
+                user.setPartying(rs.getInt("partying"));
+                user.setOrganized(rs.getInt("organized"));
+                user.setAthlete(rs.getInt("athlete"));
+                user.setOrganized(rs.getInt("freak"));
+                user.setSociable(rs.getInt("sociable"));
+                user.setActive(rs.getInt("active"));
+            }
+        } catch (SQLException e) {
+            throw new InternalServerError();
+        }
+        return user;
     }
 
     public User getUserById(int id) throws InternalServerError {
 
         User user = null;
 
-        String querySelect = "SELECT  * FROM users WHERE id=?" ;
+        String querySelect = "SELECT  * FROM users WHERE email=?" ;
 
         try{
             PreparedStatement preparedStatement = connect.prepareStatement(querySelect);
@@ -128,7 +168,9 @@ public class DAOUser {
         return successful;
     }
 
+    public void deleteUser(){
 
+    }
 }
 
 

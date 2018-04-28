@@ -5,8 +5,8 @@ import com.cgaxtr.hiroom.DAO.DAOUser;
 import com.cgaxtr.hiroom.Exceptions.InternalServerError;
 import com.cgaxtr.hiroom.Exceptions.UserAlreadyExists;
 import com.cgaxtr.hiroom.POJO.Credential;
-import com.cgaxtr.hiroom.POJO.Token;
 import com.cgaxtr.hiroom.POJO.User;
+import com.cgaxtr.hiroom.POJO.UserData;
 import com.cgaxtr.hiroom.Utils.File;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -21,14 +21,22 @@ public class UserService {
 
     private DAOUser userDAO = new DAOUser();
 
+    //modify response
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/register")
     public Response registerUser(User user){
-
+        UserData response = null;
         try {
-            userDAO.register(user);
+            int id = userDAO.register(user);
+            String token = JWTUtils.issueToken(user.getEmail());
+            User u = new User();
+            u.setId(id);
+            u.setEmail(user.getEmail());
+            u.setName(user.getName());
+            response = new UserData(token, u);
+
         } catch (UserAlreadyExists userAlreadyExists) {
             return Response.status(Response.Status.CONFLICT).build();
         } catch (InternalServerError internalServerError) {
@@ -37,7 +45,7 @@ public class UserService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        return Response.ok().build();
+        return Response.ok().entity(response).build();
     }
 
     @POST
@@ -45,7 +53,7 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/login")
     public Response login(Credential credential){
-        Boolean login;
+        User login;
 
         try{
             login = userDAO.login(credential);
@@ -55,10 +63,10 @@ public class UserService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        if (login){
+        if (login != null){
             String token = JWTUtils.issueToken(credential.getEmail());
-            Token t = new Token(token);
-            return Response.status(Response.Status.OK).entity(t).build();
+            UserData response = new UserData(token, login);
+            return Response.status(Response.Status.OK).entity(response).build();
         }else{
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }

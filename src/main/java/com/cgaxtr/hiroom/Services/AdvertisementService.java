@@ -58,6 +58,7 @@ public class AdvertisementService {
         return Response.status(Response.Status.OK).entity(advertisements).build();
     }
 
+    //In response give advertisement id
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addvertisements(Advertisement add){
@@ -83,6 +84,8 @@ public class AdvertisementService {
 
         return Response.status(Response.Status.OK).build();
     }
+
+
     /*
     @POST
     @Path("/{id}")
