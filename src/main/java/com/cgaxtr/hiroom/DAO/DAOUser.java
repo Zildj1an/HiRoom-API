@@ -111,7 +111,7 @@ public class DAOUser {
 
         boolean successful = false;
 
-        String updateQuery = "UPDATE users SET name = ?, email = ?, gender = ?, smoker = ?, worker = ?, " +
+        String updateQuery = "UPDATE users SET name = ?, email = ?, gender = ?, city = ?, smoker = ?, worker = ?, " +
                 "description = ?, partying = ?, organized = ?, athlete = ?, freak = ?, sociable = ?, active = ? where id = ?";
 
         try {
@@ -119,16 +119,17 @@ public class DAOUser {
             ps.setString(1, user.getName());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getGender());
-            ps.setBoolean(4,user.getSmoker());
-            ps.setString(5,user.getWorker());
-            ps.setString(6, user.getDescription());
-            ps.setInt(7, user.getPartying());
-            ps.setInt(8, user.getOrganized());
-            ps.setInt(9, user.getAthlete());
-            ps.setInt(10, user.getFreak());
-            ps.setInt(11, user.getSociable());
-            ps.setInt(12, user.getActive());
-            ps.setInt(13, id);
+            ps.setString(4, user.getCity());
+            ps.setBoolean(5,user.getSmoker());
+            ps.setString(6,user.getWorker());
+            ps.setString(7, user.getDescription());
+            ps.setInt(8, user.getPartying());
+            ps.setInt(9, user.getOrganized());
+            ps.setInt(10, user.getAthlete());
+            ps.setInt(11, user.getFreak());
+            ps.setInt(12, user.getSociable());
+            ps.setInt(13, user.getActive());
+            ps.setInt(14, id);
 
             if( ps.executeUpdate() != 0){
                 successful = true;
@@ -141,16 +142,13 @@ public class DAOUser {
         return successful;
     }
 
-    public void deleteUser(){
-
-    }
-
     private User populateUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setId(rs.getInt("id"));
         user.setName(rs.getString("name"));
         user.setEmail(rs.getString("email"));
         user.setPathImg(rs.getString("imgPath"));
+        user.setCity(rs.getString("city"));
         user.setGender(rs.getString("gender"));
         user.setSmoker(rs.getBoolean("smoker"));
         user.setWorker(rs.getString("worker"));

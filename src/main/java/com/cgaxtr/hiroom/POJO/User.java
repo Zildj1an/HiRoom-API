@@ -7,6 +7,7 @@ public class User {
     private String email;
     private String pass;
     private String pathImg;
+    private String city;
     private String gender;
     private Boolean smoker;
     private String worker;
@@ -17,39 +18,7 @@ public class User {
     private int freak;
     private int sociable;
     private int active;
-    /*
-    public enum Gender {
-        MALE("male"),
-        FEMALE("female");
 
-        private String gender;
-
-        Gender(String gender){
-            this.gender = gender;
-        }
-
-        @Override
-        public String toString() {
-            return gender;
-        }
-    }
-    public enum Worker{
-        STUDENT("student"),
-        WORKER("worker"),
-        BOTH("both");
-
-        private String worker;
-
-        Worker(String type){
-            this.worker = type;
-        }
-
-        @Override
-        public String toString() {
-            return worker;
-        }
-    }
-    */
     public int getId() {
         return id;
     }
@@ -88,6 +57,14 @@ public class User {
 
     public void setPathImg(String pathImg) {
         this.pathImg = pathImg;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getGender() {
