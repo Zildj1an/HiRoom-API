@@ -78,21 +78,7 @@ public class DAOUser {
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()){
-                user = new User();
-                user.setId(rs.getInt("id"));
-                user.setName(rs.getString("name"));
-                user.setEmail(rs.getString("email"));
-                user.setPathImg(rs.getString("imgPath"));
-                user.setGender(rs.getString("gender"));
-                user.setSmoker(rs.getBoolean("smoker"));
-                user.setWorker(rs.getString("worker"));
-                user.setDescription(rs.getString("description"));
-                user.setPartying(rs.getInt("partying"));
-                user.setOrganized(rs.getInt("organized"));
-                user.setAthlete(rs.getInt("athlete"));
-                user.setOrganized(rs.getInt("freak"));
-                user.setSociable(rs.getInt("sociable"));
-                user.setActive(rs.getInt("active"));
+                user = populateUser(rs);
             }
         } catch (SQLException e) {
             throw new InternalServerError();
@@ -104,7 +90,7 @@ public class DAOUser {
 
         User user = null;
 
-        String querySelect = "SELECT  * FROM users WHERE email=?" ;
+        String querySelect = "SELECT  * FROM users WHERE id=?" ;
 
         try{
             PreparedStatement preparedStatement = connect.prepareStatement(querySelect);
@@ -113,21 +99,7 @@ public class DAOUser {
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()){
-                user = new User();
-                user.setId(rs.getInt("id"));
-                user.setName(rs.getString("name"));
-                user.setEmail(rs.getString("email"));
-                user.setPathImg(rs.getString("imgPath"));
-                user.setGender(rs.getString("gender"));
-                user.setSmoker(rs.getBoolean("smoker"));
-                user.setWorker(rs.getString("worker"));
-                user.setDescription(rs.getString("description"));
-                user.setPartying(rs.getInt("partying"));
-                user.setOrganized(rs.getInt("organized"));
-                user.setAthlete(rs.getInt("athlete"));
-                user.setOrganized(rs.getInt("freak"));
-                user.setSociable(rs.getInt("sociable"));
-                user.setActive(rs.getInt("active"));
+                user = populateUser(rs);
             }
         } catch (SQLException e) {
             throw new InternalServerError();
@@ -156,6 +128,7 @@ public class DAOUser {
             ps.setInt(10, user.getFreak());
             ps.setInt(11, user.getSociable());
             ps.setInt(12, user.getActive());
+            ps.setInt(13, id);
 
             if( ps.executeUpdate() != 0){
                 successful = true;
@@ -170,6 +143,26 @@ public class DAOUser {
 
     public void deleteUser(){
 
+    }
+
+    private User populateUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getInt("id"));
+        user.setName(rs.getString("name"));
+        user.setEmail(rs.getString("email"));
+        user.setPathImg(rs.getString("imgPath"));
+        user.setGender(rs.getString("gender"));
+        user.setSmoker(rs.getBoolean("smoker"));
+        user.setWorker(rs.getString("worker"));
+        user.setDescription(rs.getString("description"));
+        user.setPartying(rs.getInt("partying"));
+        user.setOrganized(rs.getInt("organized"));
+        user.setAthlete(rs.getInt("athlete"));
+        user.setOrganized(rs.getInt("freak"));
+        user.setSociable(rs.getInt("sociable"));
+        user.setActive(rs.getInt("active"));
+
+        return user;
     }
 }
 

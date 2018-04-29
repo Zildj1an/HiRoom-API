@@ -21,7 +21,6 @@ public class UserService {
 
     private DAOUser userDAO = new DAOUser();
 
-    //modify response
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -96,7 +95,7 @@ public class UserService {
     public User getProfile(@PathParam("id") int id) {
         User u = null;
         try{
-            u = userDAO.getUserById(12);
+            u = userDAO.getUserById(id);
         } catch (InternalServerError internalServerError) {
             internalServerError.printStackTrace();
         }
