@@ -1,5 +1,6 @@
 package com.cgaxtr.hiroom.Services;
 
+import com.cgaxtr.hiroom.Auth.JWTTokenNeeded;
 import com.cgaxtr.hiroom.Auth.JWTUtils;
 import com.cgaxtr.hiroom.DAO.DAOUser;
 import com.cgaxtr.hiroom.Exceptions.InternalServerError;
@@ -91,7 +92,7 @@ public class UserService {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    //@JWTTokenNeeded
+    @JWTTokenNeeded
     public User getProfile(@PathParam("id") int id) {
         User u = null;
         try{
@@ -102,9 +103,9 @@ public class UserService {
         return u;
     }
 
-    @POST
+    @PUT
     //@JWTTokenNeeded
-    @Path("/update/{id}")
+    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateProfile(@PathParam("id") int id, User user){

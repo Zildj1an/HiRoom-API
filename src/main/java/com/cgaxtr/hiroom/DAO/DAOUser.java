@@ -6,10 +6,13 @@ import com.cgaxtr.hiroom.Exceptions.UserAlreadyExists;
 import com.cgaxtr.hiroom.POJO.Credential;
 import com.cgaxtr.hiroom.POJO.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 
 public class DAOUser {
     private Connection connect;
@@ -69,7 +72,7 @@ public class DAOUser {
 
         User user = null;
 
-        String querySelect = "SELECT  * FROM users WHERE email=?" ;
+        String querySelect = "SELECT * FROM users WHERE email=?" ;
 
         try{
             PreparedStatement preparedStatement = connect.prepareStatement(querySelect);
@@ -90,7 +93,7 @@ public class DAOUser {
 
         User user = null;
 
-        String querySelect = "SELECT  * FROM users WHERE id=?" ;
+        String querySelect = "SELECT * FROM users WHERE id=?" ;
 
         try{
             PreparedStatement preparedStatement = connect.prepareStatement(querySelect);
@@ -111,25 +114,27 @@ public class DAOUser {
 
         boolean successful = false;
 
-        String updateQuery = "UPDATE users SET name = ?, email = ?, gender = ?, city = ?, smoker = ?, worker = ?, " +
+        String updateQuery = "UPDATE users SET name = ?, surname = ?, email = ?, birthDate = ?, gender = ?, city = ?, smoker = ?, worker = ?, " +
                 "description = ?, partying = ?, organized = ?, athlete = ?, freak = ?, sociable = ?, active = ? where id = ?";
 
         try {
             PreparedStatement ps = connect.prepareStatement(updateQuery);
             ps.setString(1, user.getName());
-            ps.setString(2, user.getEmail());
-            ps.setString(3, user.getGender());
-            ps.setString(4, user.getCity());
-            ps.setBoolean(5,user.getSmoker());
-            ps.setString(6,user.getWorker());
-            ps.setString(7, user.getDescription());
-            ps.setInt(8, user.getPartying());
-            ps.setInt(9, user.getOrganized());
-            ps.setInt(10, user.getAthlete());
-            ps.setInt(11, user.getFreak());
-            ps.setInt(12, user.getSociable());
-            ps.setInt(13, user.getActive());
-            ps.setInt(14, id);
+            ps.setString(2, user.getSurname());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, dateFormatDB(user.getBithDate()));
+            ps.setString(5, user.getGender());
+            ps.setString(6, user.getCity());
+            ps.setBoolean(7,user.getSmoker());
+            ps.setString(8,user.getWorker());
+            ps.setString(9, user.getDescription());
+            ps.setInt(10, user.getPartying());
+            ps.setInt(11, user.getOrganized());
+            ps.setInt(12, user.getAthlete());
+            ps.setInt(13, user.getFreak());
+            ps.setInt(14, user.getSociable());
+            ps.setInt(15, user.getActive());
+            ps.setInt(16, id);
 
             if( ps.executeUpdate() != 0){
                 successful = true;
@@ -146,7 +151,9 @@ public class DAOUser {
         User user = new User();
         user.setId(rs.getInt("id"));
         user.setName(rs.getString("name"));
+        user.setSurname(rs.getString("surname"));
         user.setEmail(rs.getString("email"));
+        user.setBithDate(dateFormatUser(rs.getString("birthDate")));
         user.setPathImg(rs.getString("imgPath"));
         user.setCity(rs.getString("city"));
         user.setGender(rs.getString("gender"));
@@ -156,12 +163,25 @@ public class DAOUser {
         user.setPartying(rs.getInt("partying"));
         user.setOrganized(rs.getInt("organized"));
         user.setAthlete(rs.getInt("athlete"));
-        user.setOrganized(rs.getInt("freak"));
+        user.setFreak(rs.getInt("freak"));
         user.setSociable(rs.getInt("sociable"));
         user.setActive(rs.getInt("active"));
 
         return user;
     }
+
+    private String dateFormatDB(String date){
+
+       return date.substring(6,10) + '/' + date.substring(3,5) + '/' + date.substring(0,2);
+    }
+
+    private String dateFormatUser(String date){
+
+        if(date == null)
+            return null;
+        return date.substring(0,2) + '/' + date.substring(3,5) + '/' + date.substring(6,10);
+    }
+
 }
 
 
