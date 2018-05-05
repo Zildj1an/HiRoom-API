@@ -6,6 +6,7 @@ public class User {
     private String name;
     private String surname;
     private String email;
+    private int phoneNumber;
     private String bithDate;
     private String pass;
     private String pathImg;
@@ -51,6 +52,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(int phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getBithDate() {

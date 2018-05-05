@@ -114,7 +114,7 @@ public class DAOUser {
 
         boolean successful = false;
 
-        String updateQuery = "UPDATE users SET name = ?, surname = ?, email = ?, birthDate = ?, gender = ?, city = ?, smoker = ?, worker = ?, " +
+        String updateQuery = "UPDATE users SET name = ?, surname = ?, email = ?, phoneNumber = ?, birthDate = ?, gender = ?, city = ?, smoker = ?, worker = ?, " +
                 "description = ?, partying = ?, organized = ?, athlete = ?, freak = ?, sociable = ?, active = ? where id = ?";
 
         try {
@@ -122,19 +122,20 @@ public class DAOUser {
             ps.setString(1, user.getName());
             ps.setString(2, user.getSurname());
             ps.setString(3, user.getEmail());
-            ps.setString(4, dateFormatDB(user.getBithDate()));
-            ps.setString(5, user.getGender());
-            ps.setString(6, user.getCity());
-            ps.setBoolean(7,user.getSmoker());
-            ps.setString(8,user.getWorker());
-            ps.setString(9, user.getDescription());
-            ps.setInt(10, user.getPartying());
-            ps.setInt(11, user.getOrganized());
-            ps.setInt(12, user.getAthlete());
-            ps.setInt(13, user.getFreak());
-            ps.setInt(14, user.getSociable());
-            ps.setInt(15, user.getActive());
-            ps.setInt(16, id);
+            ps.setInt(4, user.getPhoneNumber());
+            ps.setString(5, dateFormatDB(user.getBithDate()));
+            ps.setString(6, user.getGender());
+            ps.setString(7, user.getCity());
+            ps.setBoolean(8,user.getSmoker());
+            ps.setString(9,user.getWorker());
+            ps.setString(10, user.getDescription());
+            ps.setInt(11, user.getPartying());
+            ps.setInt(12, user.getOrganized());
+            ps.setInt(13, user.getAthlete());
+            ps.setInt(14, user.getFreak());
+            ps.setInt(15, user.getSociable());
+            ps.setInt(16, user.getActive());
+            ps.setInt(17, id);
 
             if( ps.executeUpdate() != 0){
                 successful = true;
@@ -153,6 +154,7 @@ public class DAOUser {
         user.setName(rs.getString("name"));
         user.setSurname(rs.getString("surname"));
         user.setEmail(rs.getString("email"));
+        user.setPhoneNumber(rs.getInt("phoneNumber"));
         user.setBithDate(dateFormatUser(rs.getString("birthDate")));
         user.setPathImg(rs.getString("imgPath"));
         user.setCity(rs.getString("city"));
