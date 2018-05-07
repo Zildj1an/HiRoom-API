@@ -7,7 +7,7 @@ public class User {
     private String surname;
     private String email;
     private int phoneNumber;
-    private String bithDate;
+    private String birthDate;
     private String pass;
     private String pathImg;
     private String city;
@@ -62,12 +62,12 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getBithDate() {
-        return bithDate;
+    public String getBirthDate() {
+        return birthDate;
     }
 
-    public void setBithDate(String bithDate) {
-        this.bithDate = bithDate;
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getPass() {

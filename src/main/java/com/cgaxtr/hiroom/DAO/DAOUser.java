@@ -9,10 +9,8 @@ import com.cgaxtr.hiroom.POJO.User;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import java.util.Date;
-import java.util.Locale;
 
 public class DAOUser {
     private Connection connect;
@@ -83,7 +81,7 @@ public class DAOUser {
             if (rs.next()){
                 user = populateUser(rs);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ParseException e) {
             throw new InternalServerError();
         }
         return user;
@@ -104,7 +102,7 @@ public class DAOUser {
             if (rs.next()){
                 user = populateUser(rs);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ParseException e) {
             throw new InternalServerError();
         }
         return user;
@@ -123,7 +121,7 @@ public class DAOUser {
             ps.setString(2, user.getSurname());
             ps.setString(3, user.getEmail());
             ps.setInt(4, user.getPhoneNumber());
-            ps.setString(5, dateFormatDB(user.getBithDate()));
+            ps.setString(5, dateFormatDB(user.getBirthDate()));
             ps.setString(6, user.getGender());
             ps.setString(7, user.getCity());
             ps.setBoolean(8,user.getSmoker());
@@ -141,21 +139,21 @@ public class DAOUser {
                 successful = true;
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException | ParseException e) {
             throw new InternalServerError();
         }
 
         return successful;
     }
 
-    private User populateUser(ResultSet rs) throws SQLException {
+    private User populateUser(ResultSet rs) throws SQLException, ParseException {
         User user = new User();
         user.setId(rs.getInt("id"));
         user.setName(rs.getString("name"));
         user.setSurname(rs.getString("surname"));
         user.setEmail(rs.getString("email"));
         user.setPhoneNumber(rs.getInt("phoneNumber"));
-        user.setBithDate(dateFormatUser(rs.getString("birthDate")));
+        user.setBirthDate(dateFormatUser(rs.getString("birthDate")));
         user.setPathImg(rs.getString("imgPath"));
         user.setCity(rs.getString("city"));
         user.setGender(rs.getString("gender"));
@@ -172,16 +170,30 @@ public class DAOUser {
         return user;
     }
 
-    private String dateFormatDB(String date){
+    private String dateFormatDB(String date) throws ParseException {
+        final String OLD_FORMAT = "dd/MM/yyyy";
+        final String NEW_FORMAT = "yyyy-MM-dd";
 
-       return date.substring(6,10) + '/' + date.substring(3,5) + '/' + date.substring(0,2);
+        SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+        Date d = sdf.parse(date);
+        sdf.applyPattern(NEW_FORMAT);
+
+        return sdf.format(d);
+
     }
 
-    private String dateFormatUser(String date){
-
+    private String dateFormatUser(String date) throws ParseException {
         if(date == null)
             return null;
-        return date.substring(0,2) + '/' + date.substring(3,5) + '/' + date.substring(6,10);
+
+        final String OLD_FORMAT = "yyyy-MM-dd";
+        final String NEW_FORMAT = "dd/MM/yyyy";
+
+        SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+        Date d = sdf.parse(date);
+        sdf.applyPattern(NEW_FORMAT);
+
+        return sdf.format(d);
     }
 
 }
