@@ -4,7 +4,11 @@ import java.util.List;
 
 public class Advertisement {
     private int idAdvertisement;
+    private String title;
+    private String type;
     private String address;
+    private int number;
+    private String city;
     private int price;
     private int size;
     private int floor;
@@ -13,6 +17,7 @@ public class Advertisement {
     private int ownerId;
     private String ownerName;
     private String ownerEmail;
+    private int ownerPhone;
 
     public int getIdAdvertisement() {
         return idAdvertisement;
@@ -22,12 +27,44 @@ public class Advertisement {
         this.idAdvertisement = idAdvertisement;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getAddress() {
         return address;
     }
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public int getPrice() {
@@ -92,5 +129,13 @@ public class Advertisement {
 
     public void setOwnerEmail(String ownerEmail) {
         this.ownerEmail = ownerEmail;
+    }
+
+    public int getOwnerPhone() {
+        return ownerPhone;
+    }
+
+    public void setOwnerPhone(int ownerPhone) {
+        this.ownerPhone = ownerPhone;
     }
 }

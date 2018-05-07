@@ -85,7 +85,20 @@ public class AdvertisementService {
         return Response.status(Response.Status.OK).build();
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/search/{city}")
+    public Response searchAdvertisements(@PathParam("city") String city){
+        List<Advertisement> list;
 
+        try {
+            list = dao.search(city);
+        } catch (InternalServerError internalServerError) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return Response.status(Response.Status.OK).entity(list).build();
+    }
     /*
     @POST
     @Path("/{id}")
