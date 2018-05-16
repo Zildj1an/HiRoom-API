@@ -1,12 +1,16 @@
 package com.cgaxtr.hiroom.Utils;
 
 import javax.validation.constraints.NotNull;
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class File {
 
-    public static String USER_PROFILE_PATH="d://uploads/profile/";
-    public static String ADVERTISEMENT_PATH ="d://uploads/advertisement/";
+    //public static String USER_PROFILE_PATH="C:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\webapps\\api\\uploads\\profile\\";
+    public static String USER_PROFILE_PATH="d://uploads/";
+    public static String ADVERTISEMENT_PATH ="C:\\Program Files\\Apache Software Foundation\\Tomcat 9.0\\webapps\\api\\uploads\\advertisement\\";
 
     public static void save(InputStream uploadedInputStream, @NotNull String uploadedFileLocation) throws IOException{
 

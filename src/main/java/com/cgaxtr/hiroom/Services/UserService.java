@@ -8,6 +8,7 @@ import com.cgaxtr.hiroom.Exceptions.UserAlreadyExists;
 import com.cgaxtr.hiroom.POJO.Credential;
 import com.cgaxtr.hiroom.POJO.User;
 import com.cgaxtr.hiroom.POJO.UserData;
+import com.cgaxtr.hiroom.Utils.Config;
 import com.cgaxtr.hiroom.Utils.File;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -27,7 +28,7 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/register")
     public Response registerUser(User user){
-        UserData response = null;
+        UserData response;
         try {
             int id = userDAO.register(user);
             String token = JWTUtils.issueToken(user.getEmail());
@@ -75,17 +76,17 @@ public class UserService {
     @POST
     @Path("/update_profile_image")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadUserProfile(@FormDataParam("file") InputStream fileInputStream, @FormDataParam("file") FormDataContentDisposition fileMetaData){
+    public Response uploadUserProfile(@FormDataParam("file") InputStream fileInputStream, @FormDataParam("file") FormDataContentDisposition fileMetaData, @FormDataParam("id") int id){
 
         try {
             File.save(fileInputStream, File.USER_PROFILE_PATH + fileMetaData.getFileName());
 
-            //update database
+            String url = Config.DOMAIN + ":" + Config.PORT + Config.AVATAR_FOLDER + fileMetaData.getFileName();
+            userDAO.updateAvatar(url,id);
         } catch (Exception e){
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-
         return Response.status(Response.Status.OK).build();
     }
 
@@ -107,7 +108,6 @@ public class UserService {
     //@JWTTokenNeeded
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response updateProfile(@PathParam("id") int id, User user){
 
         try {

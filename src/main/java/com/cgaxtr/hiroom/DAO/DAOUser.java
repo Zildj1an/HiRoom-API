@@ -146,6 +146,26 @@ public class DAOUser {
         return successful;
     }
 
+    public boolean updateAvatar(String path, int id) throws InternalServerError {
+        boolean successful = false;
+
+        String update = "UPDATE users SET imgPath= ? where id = ?";
+        try {
+            PreparedStatement ps = connect.prepareStatement(update);
+            ps.setString(1, path);
+            ps.setInt(2, id);
+
+            if( ps.executeUpdate() != 0){
+                successful = true;
+            }
+
+        } catch (SQLException e) {
+            throw  new InternalServerError();
+        }
+
+        return successful;
+    }
+
     private User populateUser(ResultSet rs) throws SQLException, ParseException {
         User user = new User();
         user.setId(rs.getInt("id"));
