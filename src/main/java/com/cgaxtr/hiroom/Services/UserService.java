@@ -84,7 +84,6 @@ public class UserService {
             String url = Config.DOMAIN + ":" + Config.PORT + Config.AVATAR_FOLDER + fileMetaData.getFileName();
             userDAO.updateAvatar(url,id);
         } catch (Exception e){
-            e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.status(Response.Status.OK).build();

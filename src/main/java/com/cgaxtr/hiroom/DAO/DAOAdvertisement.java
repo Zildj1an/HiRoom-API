@@ -174,4 +174,25 @@ public class DAOAdvertisement {
 
         return list;
     }
+
+    public boolean addImage(String path, int id) throws InternalServerError {
+        boolean ok = true;
+
+        String insert = "INSERT INTO advertisement_images (id_advertisement, path) VALUES (?,?)";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(insert);
+            ps.setString(2, path);
+            ps.setInt(1, id);
+
+            if( ps.executeUpdate() != 0){
+                ok = true;
+            }
+
+        } catch (SQLException e) {
+            throw  new InternalServerError();
+        }
+
+        return ok;
+    }
 }
