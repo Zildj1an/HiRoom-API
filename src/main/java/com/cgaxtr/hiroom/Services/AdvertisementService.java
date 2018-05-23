@@ -67,14 +67,16 @@ public class AdvertisementService {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response addvertisements(Advertisement add){
 
         try {
-            dao.addAdvertisement(add);
+            long id = dao.addAdvertisement(add);
+            add.setIdAdvertisement(Math.toIntExact(id));
         } catch (InternalServerError internalServerError) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return  Response.status(Response.Status.OK).build();
+        return  Response.status(Response.Status.OK).entity(add).build();
     }
 
     @DELETE
@@ -112,9 +114,10 @@ public class AdvertisementService {
     public Response uploadUserProfile(@FormDataParam("file") InputStream fileInputStream, @FormDataParam("file") FormDataContentDisposition fileMetaData, @FormDataParam("id") int id){
 
         try {
-            File.save(fileInputStream, File.ADVERTISEMENT_PATH + fileMetaData.getFileName());
-            String url = Config.DOMAIN + ":" + Config.PORT + Config.ADVERTISEMENT_FOLDER + fileMetaData.getFileName();
-            dao.addImage(url, 1);
+            String name = File.generateName(fileMetaData.getFileName());
+            File.save(fileInputStream, File.ADVERTISEMENT_PATH + name);
+            String url = Config.DOMAIN + ":" + Config.PORT + Config.ADVERTISEMENT_FOLDER + name;
+            dao.addImage(url, id);
         } catch (IOException | InternalServerError e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }

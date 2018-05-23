@@ -4,10 +4,7 @@ import com.cgaxtr.hiroom.DB;
 import com.cgaxtr.hiroom.Exceptions.InternalServerError;
 import com.cgaxtr.hiroom.POJO.Advertisement;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,12 +37,12 @@ public class DAOAdvertisement {
         return add;
     }
 
-    public void addAdvertisement(Advertisement adv) throws InternalServerError {
+    public long addAdvertisement(Advertisement adv) throws InternalServerError {
 
         String insertAdd = "INSERT INTO advertisements (id_user, title, type, address, number, city, price, size, floor, description) VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         try{
-            PreparedStatement preparedStatement = connection.prepareStatement(insertAdd);
+            PreparedStatement preparedStatement = connection.prepareStatement(insertAdd, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1,adv.getOwnerId());
             preparedStatement.setString(2, adv.getTitle());
             preparedStatement.setString(3, adv.getType());
@@ -57,7 +54,20 @@ public class DAOAdvertisement {
             preparedStatement.setInt(9, adv.getFloor());
             preparedStatement.setString(10, adv.getDescription());
 
-            preparedStatement.execute();
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new InternalServerError("Creating user failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                }
+                else {
+                    throw new InternalServerError("Creating user failed, no ID obtained.");
+                }
+            }
 
         } catch (SQLException e) {
             throw new InternalServerError();

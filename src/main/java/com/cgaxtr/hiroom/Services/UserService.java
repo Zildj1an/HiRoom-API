@@ -79,9 +79,10 @@ public class UserService {
     public Response uploadUserProfile(@FormDataParam("file") InputStream fileInputStream, @FormDataParam("file") FormDataContentDisposition fileMetaData, @FormDataParam("id") int id){
 
         try {
-            File.save(fileInputStream, File.USER_PROFILE_PATH + fileMetaData.getFileName());
+            String name = File.generateName(fileMetaData.getFileName());
+            File.save(fileInputStream, File.USER_PROFILE_PATH + name);
 
-            String url = Config.DOMAIN + ":" + Config.PORT + Config.AVATAR_FOLDER + fileMetaData.getFileName();
+            String url = Config.DOMAIN + ":" + Config.PORT + Config.AVATAR_FOLDER + name;
             userDAO.updateAvatar(url,id);
         } catch (Exception e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
